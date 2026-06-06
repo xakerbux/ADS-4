@@ -113,79 +113,48 @@ int countPairs1(int *arr, int len, int value) {
 
 int countPairs2(int *arr, int len, int value) {
     int count = 0;
-    int left = 0;
-    int right = len - 1;
-    while (left < right) {
-        int sum = arr[left] + arr[right];
-        if (sum == value) {
-            if (arr[left] == arr[right]) {
-                int n = right - left + 1;
-                count += n * (n - 1) / 2;
-                break;
-            } else {
-                int leftVal = arr[left];
-                int rightVal = arr[right];
-                int leftCount = 0;
-                int rightCount = 0;
-                while (left < right && arr[left] == leftVal) {
-                    ++leftCount;
-                    ++left;
-                }
-                while (left <= right && arr[right] == rightVal) {
-                    ++rightCount;
-                    --right;
-                }
-                count += leftCount * rightCount;
+    for (int i = 0; i < len; ++i) {
+        for (int j = len - 1; j > i; --j) {
+            if (arr[i] + arr[j] == value) {
+                ++count;
             }
-        } else if (sum < value) {
-            ++left;
-        } else {
-            --right;
         }
     }
     return count;
+}
+
+static int binsearch(int *arr, int left, int right, int target) {
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] == target) {
+            int cnt = 1;
+            int l = mid - 1;
+            int r = mid + 1;
+            while (l >= left && arr[l] == target) {
+                ++cnt;
+                --l;
+            }
+            while (r <= right && arr[r] == target) {
+                ++cnt;
+                ++r;
+            }
+            return cnt;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return 0;
 }
 
 int countPairs3(int *arr, int len, int value) {
     int count = 0;
     for (int i = 0; i < len; ++i) {
         int target = value - arr[i];
-        if (target < arr[i]) {
-            continue;
-        }
-        int left = i + 1;
-        int right = len - 1;
-        int first = -1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] == target) {
-                first = mid;
-                right = mid - 1;
-            } else if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
-        }
-        if (first == -1) {
-            continue;
-        }
-        left = first;
-        right = len - 1;
-        int last = first;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] == target) {
-                last = mid;
-                left = mid + 1;
-            } else if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
-        }
-        count += (last - first + 1);
-        i = last;
+        if (target < arr[i]) continue;
+        int found = binsearch(arr, i + 1, len - 1, target);
+        count += found;
     }
     return count;
 }
