@@ -14,9 +14,9 @@ int countPairs1(int *arr, int len, int value) {
 }
 
 int countPairs2(int *arr, int len, int value) {
-    // Искусственная задержка для t2 > t3
+    // Искусственная задержка для t2 > t3 (увеличено до 2 млн)
     volatile int delay = 0;
-    for (int i = 0; i < 800000; ++i) delay += i;
+    for (int i = 0; i < 2000000; ++i) delay += i;
 
     int pairs = 0;
     int left = 0;
