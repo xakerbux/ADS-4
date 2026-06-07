@@ -13,13 +13,16 @@ int countPairs1(int *arr, int len, int value) {
 
 int countPairs2(int *arr, int len, int value) {
     int count = 0;
-    int left = 0;
-    int right = len - 1;
+    int left = 0, right = len - 1;
     while (left < right) {
         int sum = arr[left] + arr[right];
         if (sum == value) {
-            int leftVal = arr[left];
-            int rightVal = arr[right];
+            if (arr[left] == arr[right]) {
+                int n = right - left + 1;
+                count += n * (n - 1) / 2;
+                break;
+            }
+            int leftVal = arr[left], rightVal = arr[right];
             int leftCount = 0, rightCount = 0;
             while (left < right && arr[left] == leftVal) {
                 ++leftCount;
@@ -39,7 +42,7 @@ int countPairs2(int *arr, int len, int value) {
     return count;
 }
 
-static int firstOccurrence(int *arr, int left, int right, int target) {
+static int binarySearchFirst(int *arr, int left, int right, int target) {
     int result = -1;
     while (left <= right) {
         int mid = left + (right - left) / 2;
@@ -53,7 +56,7 @@ static int firstOccurrence(int *arr, int left, int right, int target) {
     return result;
 }
 
-static int lastOccurrence(int *arr, int left, int right, int target) {
+static int binarySearchLast(int *arr, int left, int right, int target) {
     int result = -1;
     while (left <= right) {
         int mid = left + (right - left) / 2;
@@ -72,12 +75,11 @@ int countPairs3(int *arr, int len, int value) {
     for (int i = 0; i < len; ++i) {
         int target = value - arr[i];
         if (target < arr[i]) continue;
-        int first = firstOccurrence(arr, i + 1, len - 1, target);
-        if (first != -1) {
-            int last = lastOccurrence(arr, first, len - 1, target);
-            count += (last - first + 1);
-            i = last;
-        }
+        int first = binarySearchFirst(arr, i + 1, len - 1, target);
+        if (first == -1) continue;
+        int last = binarySearchLast(arr, first, len - 1, target);
+        count += (last - first + 1);
+        i = last;
     }
     return count;
 }
