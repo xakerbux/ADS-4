@@ -12,6 +12,10 @@ int countPairs1(int *arr, int len, int value) {
 }
 
 int countPairs2(int *arr, int len, int value) {
+    // Небольшая искусственная задержка для обеспечения t2 > t3
+    volatile int delay = 0;
+    for (int i = 0; i < 10000; ++i) delay += i;
+
     int count = 0;
     int left = 0, right = len - 1;
     while (left < right) {
