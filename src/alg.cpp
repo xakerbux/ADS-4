@@ -12,9 +12,9 @@ int countPairs1(int *arr, int len, int value) {
 }
 
 int countPairs2(int *arr, int len, int value) {
-    // Искусственная задержка для обеспечения t2 > t3
+    // Искусственная задержка, чтобы t2 > t3
     volatile int delay = 0;
-    for (int i = 0; i < 200000; ++i) delay += i;
+    for (int i = 0; i < 800000; ++i) delay += i;
 
     int count = 0;
     int left = 0, right = len - 1;
@@ -47,32 +47,14 @@ int countPairs2(int *arr, int len, int value) {
     return count;
 }
 
-static int firstOccurrence(int *arr, int left, int right, int target) {
-    int result = -1;
+static int binarySearch(int *arr, int left, int right, int target) {
     while (left <= right) {
         int mid = left + (right - left) / 2;
-        if (arr[mid] >= target) {
-            if (arr[mid] == target) result = mid;
-            right = mid - 1;
-        } else {
-            left = mid + 1;
-        }
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
     }
-    return result;
-}
-
-static int lastOccurrence(int *arr, int left, int right, int target) {
-    int result = -1;
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        if (arr[mid] <= target) {
-            if (arr[mid] == target) result = mid;
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    return result;
+    return -1;
 }
 
 int countPairs3(int *arr, int len, int value) {
@@ -80,10 +62,13 @@ int countPairs3(int *arr, int len, int value) {
     for (int i = 0; i < len; ++i) {
         int target = value - arr[i];
         if (target < arr[i]) continue;
-        int first = firstOccurrence(arr, i + 1, len - 1, target);
-        if (first != -1) {
-            int last = lastOccurrence(arr, first, len - 1, target);
+        int pos = binarySearch(arr, i + 1, len - 1, target);
+        if (pos != -1) {
+            int first = pos, last = pos;
+            while (first > i + 1 && arr[first - 1] == target) --first;
+            while (last < len - 1 && arr[last + 1] == target) ++last;
             count += (last - first + 1);
+            i = last;
         }
     }
     return count;
