@@ -30,21 +30,23 @@ int main() {
         auto start = std::chrono::high_resolution_clock::now();
         countPairs1(data, n, 50);
         auto end = std::chrono::high_resolution_clock::now();
-        double t1 = std::chrono::duration<double, std::milli>(end - start).count();
+        double t1 = std::chrono::duration<double, std::milli>(
+            end - start).count();
 
         start = std::chrono::high_resolution_clock::now();
         countPairs2(data, n, 50);
         end = std::chrono::high_resolution_clock::now();
-        double t2 = std::chrono::duration<double, std::milli>(end - start).count();
+        double t2 = std::chrono::duration<double, std::milli>(
+            end - start).count();
 
         start = std::chrono::high_resolution_clock::now();
         countPairs3(data, n, 50);
         end = std::chrono::high_resolution_clock::now();
-        double t3 = std::chrono::duration<double, std::milli>(end - start).count();
+        double t3 = std::chrono::duration<double, std::milli>(
+            end - start).count();
 
         csv << n << "," << t1 << "," << t2 << "," << t3 << "\n";
-        std::cout << "n=" << n << " done: t1=" << t1 << " t2=" << t2 << " t3=" << t3 << "\n";
-
+        std::cout << "n=" << n << " done\n";
         delete[] data;
     }
 
