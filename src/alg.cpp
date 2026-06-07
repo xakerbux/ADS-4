@@ -1,115 +1,91 @@
 // Copyright 2025 NNTU-CS
 #include <algorithm>
 
-
 int countPairs1(int *arr, int len, int value) {
-    int count = 0;
-    for (int i = 0; i < len; ++i) {
-        for (int j = i + 1; j < len; ++j) {
-            if (arr[i] + arr[j] == value) {
-                ++count;
+    int pairs = 0;
+    for (int first = 0; first < len; ++first) {
+        for (int second = first + 1; second < len; ++second) {
+            if (arr[first] + arr[second] == value) {
+                ++pairs;
             }
         }
     }
-    return count;
+    return pairs;
 }
 
-
 int countPairs2(int *arr, int len, int value) {
-
-    volatile int delay = 0;
-    for (int i = 0; i < 3500000; ++i) {
-        delay += i;
-    }
-
-    int count = 0;
-    int left = 0, right = len - 1;
-
+    int pairs = 0;
+    int left = 0;
+    int right = len - 1;
     while (left < right) {
-        int sum = arr[left] + arr[right];
-        if (sum == value) {
+        int currentSum = arr[left] + arr[right];
+        if (currentSum == value) {
             if (arr[left] == arr[right]) {
-
-                long long n = right - left + 1;
-                count += n * (n - 1) / 2;
+                int count = right - left + 1;
+                pairs += count * (count - 1) / 2;
                 break;
             } else {
-
-                int leftVal = arr[left];
-                int rightVal = arr[right];
-                long long leftCnt = 0;
-                long long rightCnt = 0;
-
-                while (left <= right && arr[left] == leftVal) {
-                    ++leftCnt;
+                int leftValue = arr[left];
+                int rightValue = arr[right];
+                int leftCount = 0;
+                int rightCount = 0;
+                while (left < right && arr[left] == leftValue) {
+                    ++leftCount;
                     ++left;
                 }
-                while (left <= right && arr[right] == rightVal) {
-                    ++rightCnt;
+                while (left <= right && arr[right] == rightValue) {
+                    ++rightCount;
                     --right;
                 }
-                count += leftCnt * rightCnt;
+                pairs += leftCount * rightCount;
             }
-        } else if (sum < value) {
+        } else if (currentSum < value) {
             ++left;
         } else {
             --right;
         }
     }
-    return count;
+    return pairs;
 }
 
-
-static int binarySearchFirst(int *arr, int left, int right, int target) {
-    int result = -1;
+static int findFirst(int *arr, int left, int right, int target) {
+    int position = -1;
     while (left <= right) {
-        int mid = left + (right - left) / 2;
-        if (arr[mid] == target) {
-            result = mid;
-            right = mid - 1;
-        } else if (arr[mid] < target) {
-            left = mid + 1;
+        int middle = left + (right - left) / 2;
+        if (arr[middle] >= target) {
+            if (arr[middle] == target) position = middle;
+            right = middle - 1;
         } else {
-            right = mid - 1;
+            left = middle + 1;
         }
     }
-    return result;
+    return position;
 }
 
-
-static int binarySearchLast(int *arr, int left, int right, int target) {
-    int result = -1;
+static int findLast(int *arr, int left, int right, int target) {
+    int position = -1;
     while (left <= right) {
-        int mid = left + (right - left) / 2;
-        if (arr[mid] == target) {
-            result = mid;
-            left = mid + 1;
-        } else if (arr[mid] < target) {
-            left = mid + 1;
+        int middle = left + (right - left) / 2;
+        if (arr[middle] <= target) {
+            if (arr[middle] == target) position = middle;
+            left = middle + 1;
         } else {
-            right = mid - 1;
+            right = middle - 1;
         }
     }
-    return result;
+    return position;
 }
-
 
 int countPairs3(int *arr, int len, int value) {
-    int count = 0;
-    for (int i = 0; i < len; ++i) {
-        int target = value - arr[i];
-        
-        
-        if (target < arr[i]) {
-            break;
-        }
-
-        
-        int first = binarySearchFirst(arr, i + 1, len - 1, target);
-        if (first != -1) {
-            int last = binarySearchLast(arr, i + 1, len - 1, target);
-            count += (last - first + 1);
+    int pairs = 0;
+    for (int first = 0; first < len; ++first) {
+        int needed = value - arr[first];
+        if (needed < arr[first]) continue;
+        int start = findFirst(arr, first + 1, len - 1, needed);
+        if (start != -1) {
+            int finish = findLast(arr, start, len - 1, needed);
+            pairs += (finish - start + 1);
         }
     }
-    return count;
+    return pairs;
 }
